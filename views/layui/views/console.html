@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layuiAdmin 控制台主页一</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-row layui-col-space15">
+                <div class="row">
+                    <div class="layui-col-md12" style="margin-bottom: 30px; text-align: center;">
+                        <h1>文件上传</h1>
+                    </div>
+                    <div class="layui-input-inline uploadHeadImage layui-col-md12" style="" >
+                        <div class="layui-upload-drag layui-col-md12" id="upload"  >
+                            <i class="layui-icon"></i>
+                            <p>点击上传图片，或将图片拖拽到此处</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script src="../../layuiadmin/layui/layui.js?t=1"></script>
+<script>
+    layui.use(["jquery", "upload", "layer", "element"], function () {
+        var $ = layui.$,
+            element = layui.element,
+            layer = layui.layer,
+            upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#upload' //绑定元素
+            ,url: '/admin/upload/' //上传接口
+            ,done: function(res){
+                if (res.code==200){
+                    $("#uploadSuccess img").attr("src",res.data.src);
+                    var markdown=`![avatar](${res.data.src})`;
+                    var html=`<img src="${res.data.src}">`;
+                    $("#uploadSuccess #markdown").text(markdown);
+                    $("#uploadSuccess #html").text(html);
+                    layer.open({
+                        type: 1,
+                        content: $('#uploadSuccess'),
+                        maxHeight:700,
+                        maxWidth:1000,
+                        scrollbar:false,
+                        resize:false
+                    });
+                }
+            }
+        });
+    });
+</script>
+
+<div class="layui-fluid" id="uploadSuccess" hidden>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="" style="height: 600px; width: 900px;">
+                <div style="margin-bottom: 30px;">
+                    <p style="display: inline-block;width: 100px;">MarkDown:</p>
+                    <span>
+                         <pre id="markdown" style="display: inline-block;background-color: #3F3F3F;color: white;"></pre>
+                    </span>
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <p style="display: inline-block;width:  100px;">HTML:</p>
+                    <pre id="html"  style="display: inline-block;background-color: #3F3F3F;color: white;"></pre>
+                </div>
+                <div style="text-align: center;">
+                    <img src="" alt="" style="width: 70%;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
+
