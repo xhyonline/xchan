@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -34,7 +35,8 @@ func (h *Handler) LoginCheck(c *gin.Context) {
 			c.JSON(400, response(400, err.Error(), nil))
 			return
 		}
-		c.SetCookie("token", token, int(time.Hour*72), "/", "localhost", false, true)
+		fmt.Println(c.Request.Host)
+		c.SetCookie("token", token, int(time.Hour*72), "/", c.Request.Host, false, true)
 		c.JSON(200, response(200, "登录成功", nil))
 		return
 	}

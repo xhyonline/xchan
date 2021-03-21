@@ -17,4 +17,5 @@ func Auth(c *gin.Context) {
 		c.Redirect(301, "/")
 		return
 	}
+	c.Next()
 }

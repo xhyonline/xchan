@@ -45,6 +45,7 @@
             elem: '#upload' //绑定元素
             ,url: '/admin/upload/' //上传接口
             ,accept:'file'
+            ,size:0
             ,done: function(res){
                 if (res.code==200){
                     $("#uploadSuccess img").attr("src",res.data.src);

@@ -3,18 +3,16 @@ package server
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"os"
 )
 
 // Upload 上传接口
 func (h *Handler) Upload(c *gin.Context) {
+	fmt.Println("走到我这里了")
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(200, response(400, "上传失败"+err.Error(), nil))
 		return
 	}
-	fmt.Println("111111111111123213123", file.Filename)
-	os.Exit(1)
 
 	token, err := c.Cookie("token")
 	t, err := h.s.ParseToken(token)

@@ -13,7 +13,7 @@ func main() {
 	s.DB.AutoMigrate(&mod.User{}, &mod.OSS{})
 	h := server.NewHandler(s)
 	g := gin.Default()
-	g.MaxMultipartMemory = 20480 << 20 // 8 MiB
+	//g.MaxMultipartMemory = 20480 << 20 // 8 MiB
 	// 前端 HTML 文件
 	g.LoadHTMLGlob("./views/layui/views/*")
 	// css 、 js 等静态资源文件
