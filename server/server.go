@@ -4,6 +4,8 @@ import (
 	"github.com/astaxie/beego/config"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/qiniu/api.v7/v7/auth/qbox"
+	"github.com/qiniu/api.v7/v7/storage"
 	"github.com/xhyonline/xutil/db"
 	"strings"
 	"sync"
@@ -23,6 +25,8 @@ type Server struct {
 	OSS struct {
 		Key, Secret, Bucket, Domain string
 	}
+	// 七牛云对象存储管理者,它负责文件的删除,但不负责文件的上传
+	Manager *storage.BucketManager
 }
 
 // GetService 获取标准服务
@@ -55,7 +59,11 @@ func GetService() *Server {
 		}
 		domain := strings.Trim(oss["domain"], "/") + "/"
 		s.OSS = struct{ Key, Secret, Bucket, Domain string }{Key: oss["key"], Secret: oss["secret"], Bucket: oss["bucket"], Domain: domain}
+
+		mac := qbox.NewMac(s.OSS.Key, s.OSS.Secret)
+		s.Manager = storage.NewBucketManager(mac, new(storage.Config))
 		instance = s
+
 	})
 	return instance
 }

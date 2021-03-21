@@ -10,9 +10,10 @@ import (
 
 func main() {
 	s := server.GetService()
-	s.DB.AutoMigrate(&mod.User{})
+	s.DB.AutoMigrate(&mod.User{}, &mod.OSS{})
 	h := server.NewHandler(s)
 	g := gin.Default()
+	g.MaxMultipartMemory = 20480 << 20 // 8 MiB
 	// 前端 HTML 文件
 	g.LoadHTMLGlob("./views/layui/views/*")
 	// css 、 js 等静态资源文件
@@ -32,7 +33,10 @@ func main() {
 		admin.GET("/console", h.Console)
 		// 文件上传接口
 		admin.POST("/upload", h.Upload)
-
+		// 删除接口
+		admin.GET("/remove", h.Remove)
+		// 文件列表
+		admin.GET("/list")
 	}
 
 	err := g.Run("0.0.0.0:80")
