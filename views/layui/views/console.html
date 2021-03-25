@@ -1,36 +1,70 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <title>无标题文档</title>
+    <link rel="stylesheet" type="text/css" href="/drop/basic.min.css">
+    <link rel="stylesheet" type="text/css" href="/drop/dropzone.min.css">
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <title>Document</title>
+    <script src="/drop/dropzone.min.js"></script>
+    <style>
+        .dropzone-box {
+            border: 2px dashed #0087F7;
+            border-radius: 5px;
+            background: white;
+            min-height: 150px;
+            padding: 20px 20px;
+            box-sizing: border-box;
+        }
+        .dz-message {
+            text-align: center;
+            padding-top: 20px;
+        }
+    </style>
 </head>
-<body>
-<form id="uploadForm" enctype="multipart/form-data">
-    <input id="file" type="file" name="file"/>
-    <button id="upload" type="button">upload</button>
-</form>
-<script type="application/javascript">
-    $(function () {
-        $("#upload").click(function () {
-            $.ajax({
-                url: '/admin/upload',
-                type: 'POST',
-                cache: false,
-                data: new FormData($('#uploadForm')[0]),
-                processData: false,
-                contentType: false,
-                success:function (res) {
-                    console.log(res)
-                }
-            })
-        })
-    })
 
+<body>
+<div  class="dropzone-box" id="my-awesome-dropzone">
+    <div class="dz-message needsclick">
+        <p>点击或者拖拽上传</p>
+    </div>
+</div>
+
+<div class="dz-preview dz-file-preview"  id="preview-template" style="display: none">
+    <div class="dz-details">
+        <div class="dz-filename"><span data-dz-name></span></div>
+        <div class="dz-size" data-dz-size></div>
+        <img data-dz-thumbnail />
+    </div>
+    <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+    <div class="dz-success-mark"><span>✔</span></div>
+    <div class="dz-error-mark"><span>✘</span></div>
+    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+</div>
+
+{{/*使用说明*/}}
+{{/*https://segmentfault.com/a/1190000004045240*/}}
+{{/*http://wxb.github.io/dropzonejs.com.zh-CN/dropzonezh-CN/#config-previewTemplate*/}}
+<script>
+    $("#my-awesome-dropzone").dropzone({
+        url: "/admin/upload", //上传地址
+        method: "post", //方式
+        addRemoveLinks: true,
+        maxFilesize:2048,
+        filesizeBase: 1024,
+        previewTemplate: document.querySelector('#preview-template').innerHTML,
+        dictRemoveFile:"关闭",
+        dictCancelUpload:"取消上传",
+        dictCancelUploadConfirmation:"取消上传文件?",
+        dictMaxFilesExceeded:"文件太大了",
+        success: function(file, response, e) {
+            console.log(file.upload);
+            console.log(file)
+            $(file.previewTemplate).children('.dz-filename').text("文件名:"+file.upload.filename).css('opacity', '1');
+            $(file.previewTemplate).children('.dz-size').text("文件大小:"+file.upload.filename).css('opacity', '1');
+          console.log(response)
+        }
+    });
 </script>
 </body>
-
 </html>

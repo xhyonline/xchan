@@ -18,6 +18,8 @@ func main() {
 	g.LoadHTMLGlob("./views/layui/views/*")
 	// css 、 js 等静态资源文件
 	g.StaticFS("/layuiadmin", http.Dir("./views/layui/layuiadmin"))
+	// jquery 拖拽上传插件
+	g.StaticFS("/drop", http.Dir("./views/dist"))
 
 	// 登录
 	g.GET("/", h.Login)
