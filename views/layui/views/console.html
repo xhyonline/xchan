@@ -5,20 +5,84 @@
     <title>无标题文档</title>
     <link rel="stylesheet" type="text/css" href="/drop/basic.min.css">
     <link rel="stylesheet" type="text/css" href="/drop/dropzone.min.css">
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css">
+    <script src="/drop/jquery.min.js"></script>
     <script src="/drop/dropzone.min.js"></script>
+    <script src="/drop/clipboard.min.js"></script>
+    <script src="/drop/clipboard.min.js"></script>
+    <script src="/drop/layer/layer.js"></script>
+    <script src="/drop/utils.js"></script>
     <style>
+        body,html{
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            height: 100%;
+            background: url("https://picture.xhyonline.com/static/images/bg.jpg") center;
+        }
         .dropzone-box {
+            margin-top: 20px;
             border: 2px dashed #0087F7;
             border-radius: 5px;
-            background: white;
             min-height: 150px;
             padding: 20px 20px;
             box-sizing: border-box;
         }
         .dz-message {
             text-align: center;
-            padding-top: 20px;
+           line-height: 150px;
+            color: white;
+        }
+        .show-box{
+            margin-top: 50px;
+            height: 400px;
+            background-color: rgba(0,0,0,0.3);
+        }
+        .show-img {
+            box-sizing: border-box;
+            height: inherit;
+            width: 30%;
+            padding: 20px;
+
+            /*background-color: #0C0C0C;*/
+            float: left;
+        }
+        .show-img img{
+            max-height: 275px;
+            margin-top: 40px;
+            margin-left: 10%;
+            max-width: 80%;
+        }
+        .show-message{
+            box-sizing: border-box;
+            float: left;
+            height: inherit;
+            width:70%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .message{
+            margin-top: 20px;
+        }
+        .message span{
+            color: white;
+        }
+        .layui-form-label{
+            text-align: left;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .message .item{
+            margin-bottom: 50px;
+        }
+        .message input{
+            width: 75%;
+            display: inline-block!important;
+            background-color: rgba(255,255,255,0.3);
+        }
+        .message .copy{
+            margin-left: 50px;
         }
     </style>
 </head>
@@ -32,39 +96,140 @@
 
 <div class="dz-preview dz-file-preview"  id="preview-template" style="display: none">
     <div class="dz-details">
-        <div class="dz-filename"><span data-dz-name></span></div>
-        <div class="dz-size" data-dz-size></div>
-        <img data-dz-thumbnail />
     </div>
-    <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
-    <div class="dz-success-mark"><span>✔</span></div>
-    <div class="dz-error-mark"><span>✘</span></div>
-    <div class="dz-error-message"><span data-dz-errormessage></span></div>
 </div>
 
-{{/*使用说明*/}}
-{{/*https://segmentfault.com/a/1190000004045240*/}}
-{{/*http://wxb.github.io/dropzonejs.com.zh-CN/dropzonezh-CN/#config-previewTemplate*/}}
+
+<div class="show-box" hidden>
+    <div class="show-img" >
+        <img src="" alt=""  style="">
+    </div>
+    <div class="show-message">
+        <div class="message">
+            <div class="url item  item-path">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Path:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required  lay-verify="required" value=""
+                               placeholder="" autocomplete="off" class="layui-input "readonly id="path">
+                        <button type="button" class="layui-btn copy copy-path" data-clipboard-target="#path">复制</button>
+                    </div>
+                </div>
+            </div>
+            <div class="html item  item-html">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">HTML:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required  lay-verify="required" id="html" value=""
+                               placeholder="" autocomplete="off" class="layui-input" readonly >
+                        <button type="button" class="layui-btn copy copy-html" data-clipboard-target="#html">复制</button>
+                    </div>
+                </div>
+            </div>
+            <div class="MarkDown item  item-markdown">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">MarkDown:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required  lay-verify="required" id="markdown" value=""
+                               placeholder="" autocomplete="off" class="layui-input" readonly >
+                        <button type="button" class="layui-btn copy copy-markdown"  data-clipboard-target="#markdown">复制</button>
+                    </div>
+                </div>
+            </div>
+            <div class="href item item-href">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Href:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required  lay-verify="required" id="href" value=""
+                               placeholder="" autocomplete="off"   class="layui-input" readonly >
+                        <button type="button" class="layui-btn copy copy-href" data-clipboard-target="#href">复制</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
 <script>
+    // 使用说明
+    // https://segmentfault.com/a/1190000004045240
+    // http://wxb.github.io/dropzonejs.com.zh-CN/dropzonezh-CN/#config-previewTemplate
+    var copyHref = new ClipboardJS('.copy-href');
+    // 复制成功的回调
+    copyHref.on('success', function(e) {
+        layer.msg("复制 a 标签成功");
+        e.clearSelection();
+    });
+    var copyMarkDown = new ClipboardJS('.copy-markdown');
+    // 复制成功的回调
+    copyMarkDown.on('success', function(e) {
+        layer.msg("复制 markdown 成功");
+        e.clearSelection();
+    });
+    var copyPath = new ClipboardJS('.copy-path');
+    // 复制成功的回调
+    copyPath.on('success', function(e) {
+        layer.msg("复制路径成功");
+        e.clearSelection();
+    });
+    var copyHtml = new ClipboardJS('.copy-html');
+    // 复制成功的回调
+    copyHtml.on('success', function(e) {
+        layer.msg("复制标签成功");
+        e.clearSelection();
+    });
+    // 上传
     $("#my-awesome-dropzone").dropzone({
         url: "/admin/upload", //上传地址
         method: "post", //方式
-        addRemoveLinks: true,
         maxFilesize:2048,
         filesizeBase: 1024,
         previewTemplate: document.querySelector('#preview-template').innerHTML,
-        dictRemoveFile:"关闭",
-        dictCancelUpload:"取消上传",
-        dictCancelUploadConfirmation:"取消上传文件?",
-        dictMaxFilesExceeded:"文件太大了",
         success: function(file, response, e) {
-            console.log(file.upload);
-            console.log(file)
-            $(file.previewTemplate).children('.dz-filename').text("文件名:"+file.upload.filename).css('opacity', '1');
-            $(file.previewTemplate).children('.dz-size').text("文件大小:"+file.upload.filename).css('opacity', '1');
+            if (response.code==400){
+                layer.msg(response.msg);
+                return
+            }
+            $(".show-box").show();
+            var fileName=file.upload.filename;
+            var size = bytesToSize(file.upload.total,1);
+            var markdown=`![avatar](${response.data.src})`;
+            var href=`<a href="${response.data.src}">`;
+            var path=response.data.src;
+            var html=`<img src ='${response.data.src}'>`;
+            $("#path").val(path);
+            $("#html").val(html);
+            $("#markdown").val(markdown);
+            $("#href").val(href);
+            // 判断文件类型
+            switch (judgeFileType(fileName)) {
+                case "img":
+                    $(".show-img img").attr({"src":path});
+                    $(".item-html").show();
+                    $(".item.item-markdown").show();
+                    break;
+                case "other":
+                    $(".item-html").hide();
+                    $(".item.item-markdown").hide();
+                    $(".show-img img").attr({"src":"https://img0.baidu.com/it/u=3481811311,247451585&fm=26&fmt=auto&gp=0.jpg"});
+                    break;
+            }
+            layer.msg('文件上传成功');
           console.log(response)
         }
     });
+
+
+
+
 </script>
+
+
+
 </body>
 </html>

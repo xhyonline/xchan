@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>文件列表</title>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<table id="file" lay-filter="file-list"></table>
+<script src="/drop/utils.js"></script>
+<script src="/layuiadmin/layui/layui.js"></script>
+
+<script >
+    layui.use(['table','laytpl','jquery','layer'], function(){
+        var $ = layui.$;
+        var table = layui.table;
+        var layer=layui.layer;
+        //第一个实例
+        table.render({
+            elem: '#file'
+            ,height: 500
+            ,toolbar: '#toolbar-head' //开启头部工具栏，并为其绑定左侧模板
+            ,url: '/admin/list/get' //数据接口
+            ,page: true //开启分页
+            ,id:"list-table"
+            ,title: '文件数据表'
+            ,cols: [[ //表头
+                {type: 'checkbox', fixed: 'left'}
+                ,{field: 'id', title: 'ID', width:"10%", fixed: 'left',align:"center"}
+                ,{field: 'time', title: '上传时间', width:"10%",align:"center"}
+                ,{field: 'path', title: '文件路径', width:"20%",align:"center"}
+                ,{field: 'size_format', title: '文件大小', width:"10%", align:"center"}
+                ,{field: 'unit', title: '单位', width:"10%", align:"center"}
+                ,{field: 'user', title: '上传用户', width: "10%",align:"center"}
+                ,{field: 'name', title: '文件名', width: "15%",align:"center" }
+                ,{field: 'key', title: '对象存储key', width: "20%",align:"center"}
+                ,{field: 'ext', title: '后缀', width: "10%",align:"center"}
+                ,{fixed: 'right', width:150, align:'center', toolbar: '#tool',} //这里的toolbar值是模板元素的选择器
+            ]]
+        });
+
+        var delF=function (id) {
+            layer.open({
+                content: '您确定要删除吗?'
+                ,btn: ['确定', '取消']
+                ,yes: function(index, layero){
+                    $.ajax({
+                        url:"/admin/remove",
+                        method:"get",
+                        data:{"id":id},
+                        success:function (data) {
+                            layer.msg(data.msg);
+                            if (data.code!=200){
+                                return
+                            }
+                            // 重载数据
+                            table.reload('list-table', {
+                                page: {
+                                    curr: 1 //重新从第 1 页开始
+                                }
+                            });
+                        }
+                    });
+                }
+                ,btn2: function(index, layero){
+                }
+            });
+        };
+
+        //头工具栏事件 批量删除
+        table.on('toolbar(file-list)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            if (obj.event!='delFiles'){
+                return
+            }
+            var data = checkStatus.data;
+            if (data.length==0){
+                layer.msg("您还未选中文件呢");
+                return
+            }
+            var arr=[];
+            // 批量删除
+            console.log(data)
+            $.each(data,function(index,value){
+                arr.push(value.id)
+            });
+            var sendData={list:arr};
+
+            $.ajax({
+                method:"post",
+                url:"/admin/remove-list",
+                dataType:'json',
+                contentType:"application/json",
+                data:JSON.stringify(sendData),
+                success:function (data) {
+                    layer.msg(data.msg);
+                    if (data.code!=200){
+                        return
+                    }
+                    // 重载数据
+                    table.reload('list-table', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                    });
+                }
+            })
+        });
+
+        // 监听事件
+        table.on('tool(file-list)', function(obj){
+            var data = obj.data; //获得当前行数据
+            console.log(obj);
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            switch (layEvent) {
+                case "detail":
+                    window.open(data.path)
+                    break;
+                case "del":
+                    delF(data.id);
+                    break;
+            }
+        });
+    });
+</script>
+<script type="text/html" id="toolbar-head">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="delFiles">批量删除</button>
+    </div>
+</script>
+<script type="text/html" id="tool" hidden>
+    <a class="layui-btn layui-btn-xs" lay-event="detail" attr="{{d.path}}">查看</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" id="{{d.id}}">删除</a>
+</script>
+
+
+</body>
+</html>

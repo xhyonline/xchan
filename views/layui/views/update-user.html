@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css" media="all">
+    <script src="/layuiadmin/layui/layui.js"></script>
+    <title>修改用户</title>
+    <style>
+        body,html{
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        .adminuser,layui-row, .box,.layui-card{
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .layui-card{
+            padding-top: 50px;
+        }
+        .input{
+            width: 60%;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid adminuser">
+    <div class="layui-row layui-col-space15 box">
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 box">
+            <div class="layui-card">
+                <div class="layui-card-header">管理员信息</div>
+                <form class="layui-form" action="" style="margin-top: 20px;">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">管理员账号</label>
+                        <div class="layui-input-block">
+                            <input type="text"  name="user_name" required  lay-verify="required"  value="<go .username go>" readonly autocomplete="off" class="layui-input input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">旧密码</label>
+                        <div class="layui-input-block">
+                            <input type="text"  name="old_password" required  lay-verify="required" placeholder="请输入新管理员旧密码" autocomplete="off" class="layui-input input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">新密码</label>
+                        <div class="layui-input-block">
+                            <input type="text"  name="new_password" required  lay-verify="required" placeholder="请再次管理员新密码" autocomplete="off" class="layui-input input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">确认新密码</label>
+                        <div class="layui-input-block">
+                            <input type="text"  name="re_password" required  lay-verify="required" placeholder="请再次确认输入" autocomplete="off" class="layui-input input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="update-user-form">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary reset">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    layui.use(['jquery','layer','form'], function(){
+        var $ = layui.$;
+        var layer=layui.layer;
+
+        var form = layui.form;
+        //监听提交
+        form.on('submit(update-user-form)', function(data){
+            $.ajax({
+                method:"POST",
+                url:"/admin/exec/update-user",
+                dataType:'json',
+                contentType:"application/json",
+                data:JSON.stringify(data.field),
+                success:function (res) {
+                    layer.msg(res.msg)
+                    if (res.code!=200){
+                        return false
+                    }
+                    parent.location.href = "/";
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</html>

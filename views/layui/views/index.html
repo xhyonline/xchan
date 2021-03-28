@@ -15,26 +15,7 @@
     <div class="layui-layout layui-layout-admin">
       <div class="layui-header">
         <!-- 头部区域 -->
-        <ul class="layui-nav layui-layout-left">
-          <li class="layui-nav-item layadmin-flexible" lay-unselect>
-            <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
-              <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="http://www.layui.com/admin/" target="_blank" title="前台">
-              <i class="layui-icon layui-icon-website"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item" lay-unselect>
-            <a href="javascript:;" layadmin-event="refresh" title="刷新">
-              <i class="layui-icon layui-icon-refresh-3"></i>
-            </a>
-          </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords="> 
-          </li>
-        </ul>
+
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
 
           <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -51,19 +32,6 @@
             <a href="javascript:;">
               <cite>兰陵美酒郁金香</cite>
             </a>
-            <dl class="layui-nav-child">
-              <dd><a lay-href="set/user/info.html">基本资料</a></dd>
-              <dd><a lay-href="set/user/password.html">修改密码</a></dd>
-              <hr>
-              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
-            </dl>
-          </li>
-          
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="javascript:;" layadmin-event="about"><i class="layui-icon layui-icon-more-vertical"></i></a>
-          </li>
-          <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
-            <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
           </li>
         </ul>
       </div>
@@ -86,10 +54,7 @@
                   <a lay-href="/admin/console">控制台</a>
                 </dd>
                 <dd data-name="console">
-                  <a lay-href="home/homepage1.html">文件列表</a>
-                </dd>
-                <dd data-name="console">
-                  <a lay-href="home/homepage2.html">主页二</a>
+                  <a lay-href="/admin/list">文件列表</a>
                 </dd>
               </dl>
             </li>
@@ -101,13 +66,10 @@
               </a>
               <dl class="layui-nav-child">
                 <dd>
-                  <a lay-href="user/user/list.html">网站用户</a>
+                  <a lay-href="/admin/add-user">添加管理员</a>
                 </dd>
                 <dd>
-                  <a lay-href="user/administrators/list.html">后台管理员</a>
-                </dd>
-                <dd>
-                  <a lay-href="user/administrators/role.html">角色管理</a>
+                  <a lay-href="/admin/update-user">修改密码</a>
                 </dd>
               </dl>
             </li>

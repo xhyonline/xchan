@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -11,7 +10,7 @@ func (h *Handler) Login(c *gin.Context) {
 	token, err := c.Cookie("token")
 	if err == nil {
 		// cookie 没过期
-		if _, err = h.s.ParseToken(token); err == nil {
+		if _, err = h.s.ParseToken(token); token != "" && err == nil {
 			c.Redirect(301, "/admin")
 			return
 		}
@@ -23,7 +22,7 @@ func (h *Handler) Login(c *gin.Context) {
 func (h *Handler) LoginCheck(c *gin.Context) {
 	id := c.PostForm("username")
 	password := c.PostForm("password")
-	isTrue, err := h.s.CheckLogin(id, password)
+	isTrue, err := h.s.CheckIDAndPass(id, password)
 	if err != nil {
 		c.JSON(400, response(400, err.Error(), nil))
 		return
@@ -35,7 +34,6 @@ func (h *Handler) LoginCheck(c *gin.Context) {
 			c.JSON(400, response(400, err.Error(), nil))
 			return
 		}
-		fmt.Println(c.Request.Host)
 		c.SetCookie("token", token, int(time.Hour*72), "/", c.Request.Host, false, true)
 		c.JSON(200, response(200, "登录成功", nil))
 		return
