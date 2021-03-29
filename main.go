@@ -30,11 +30,10 @@ func main() {
 
 	// 后台路由组
 	admin := g.Group("/admin")
+	admin.Use(middleware.Auth)
 	{
-
-		admin.Use(middleware.Auth)
 		// 后台首页
-		admin.GET("/", h.Admin)
+		admin.GET("/index", h.Admin)
 		// 控制台
 		admin.GET("/console", h.Console)
 		// 文件上传接口
@@ -51,9 +50,9 @@ func main() {
 		admin.GET("/add-user", h.AddUser)
 		// 修改用户信息界面
 		admin.GET("/update-user", h.UpdateUser)
-
+		// 执行新增用户
 		admin.POST("/exec/add-user", h.AddUserItem)
-
+		// 执行修改用户
 		admin.POST("/exec/update-user", h.UpdateUserItem)
 	}
 

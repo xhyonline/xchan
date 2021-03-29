@@ -8,14 +8,17 @@ import (
 // Login 登录时
 func (h *Handler) Login(c *gin.Context) {
 	token, err := c.Cookie("token")
-	if err == nil {
-		// cookie 没过期
-		if _, err = h.s.ParseToken(token); token != "" && err == nil {
-			c.Redirect(301, "/admin")
-			return
-		}
+	if err != nil {
+		log.Errorf("登录获取cookie出错 %s", err)
+		c.HTML(200, "login.html", nil)
+		return
 	}
-	c.HTML(200, "login.html", nil)
+	if _, err = h.s.ParseToken(token); err != nil {
+		log.Errorf("登录出错 %s", err)
+		c.HTML(200, "login.html", nil)
+		return
+	}
+	c.Redirect(301, "/admin/index")
 }
 
 // LoginCheck 校验基本信息

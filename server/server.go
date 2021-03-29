@@ -7,6 +7,7 @@ import (
 	"github.com/qiniu/api.v7/v7/auth/qbox"
 	"github.com/qiniu/api.v7/v7/storage"
 	"github.com/xhyonline/xutil/db"
+	"github.com/xhyonline/xutil/xlog"
 	"strings"
 	"sync"
 )
@@ -14,6 +15,8 @@ import (
 var once sync.Once
 
 var instance *Server
+
+var log = xlog.Get(true)
 
 // Server
 type Server struct {
