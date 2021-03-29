@@ -9,16 +9,15 @@ import (
 func (h *Handler) Login(c *gin.Context) {
 	token, err := c.Cookie("token")
 	if err != nil {
-		log.Errorf("登录获取cookie出错 %s", err)
 		c.HTML(200, "login.html", nil)
 		return
 	}
 	if _, err = h.s.ParseToken(token); err != nil {
-		log.Errorf("登录出错 %s", err)
 		c.HTML(200, "login.html", nil)
 		return
 	}
-	c.Redirect(301, "/admin/index")
+	// 否则从登录界面直接重定向到
+	c.Redirect(307, "/admin/index")
 }
 
 // LoginCheck 校验基本信息
