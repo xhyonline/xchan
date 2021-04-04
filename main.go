@@ -3,17 +3,18 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xhyonline/xchan/middleware"
-	"github.com/xhyonline/xchan/mod"
 	"github.com/xhyonline/xchan/server"
 	"net/http"
 )
 
 func main() {
+
 	s := server.GetService()
-	s.DB.AutoMigrate(&mod.User{}, &mod.OSS{})
+
 	h := server.NewHandler(s)
 	g := gin.Default()
-	g.MaxMultipartMemory = 20480 << 20 // 8 MiB
+	// 存储最大限制
+	g.MaxMultipartMemory = 20480 << 20
 	// 修改模板标签
 	g.Delims("<go", "go>")
 	// 前端 HTML 文件
@@ -24,9 +25,16 @@ func main() {
 	// jquery 拖拽上传插件
 	g.StaticFS("/drop", http.Dir("./views/dist"))
 
-	// 登录
-	g.GET("/", h.Login)
-	g.POST("/login-check", h.LoginCheck)
+	// 前端路由组与中间件
+	front := g.Group("")
+	front.Use(middleware.InitInstall, middleware.HaveLogin)
+	{
+		front.GET("/", h.Login)
+		// 登录
+		front.POST("/login-check", h.LoginCheck)
+	}
+
+	g.POST("/install", h.Install)
 
 	// 后台路由组
 	admin := g.Group("/admin")
@@ -54,6 +62,8 @@ func main() {
 		admin.POST("/exec/add-user", h.AddUserItem)
 		// 执行修改用户
 		admin.POST("/exec/update-user", h.UpdateUserItem)
+		// 设置界面
+		admin.GET("/setting", h.Setting)
 	}
 
 	err := g.Run("0.0.0.0:80")

@@ -2,19 +2,22 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/qiniu/api.v7/v7/auth"
+	"github.com/qiniu/api.v7/v7/auth/qbox"
 	"github.com/qiniu/api.v7/v7/storage"
 	"github.com/xhyonline/xchan/mod"
 	"github.com/xhyonline/xutil/helper"
 	"mime/multipart"
+	"os"
 	"path"
 	"strings"
 )
 
-// Upload 文件上传
-func (s *Server) Upload(file *multipart.FileHeader, user string) (string, error) {
+// UploadQiNiu 文件上传
+func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, error) {
 	putPolicy := storage.PutPolicy{
 		Scope: s.OSS.Bucket,
 	}
@@ -64,19 +67,49 @@ func (s *Server) Upload(file *multipart.FileHeader, user string) (string, error)
 
 	// 入库
 	err = s.DB.Create(&mod.OSS{
-		Path: src,
-		Size: file.Size,
-		User: user,
-		Key:  ret.Key,
-		Name: file.Filename,
-		Hash: hash,
-		Ext:  path.Ext(file.Filename),
+		Path:      src,
+		Size:      file.Size,
+		User:      user,
+		Key:       ret.Key,
+		Name:      file.Filename,
+		Hash:      hash,
+		Ext:       path.Ext(file.Filename),
+		StoreType: mod.StoreType.QiNiu,
 	}).Error
 
 	if err != nil {
 		return "", err
 	}
 	return src, nil
+}
+
+// UploadLocal 上传文件到本地
+func (s *Server) UploadLocal(file *multipart.FileHeader, user string) (string, error) {
+	exists, err := helper.PathExists(s.Path)
+	if err != nil {
+		panic(err)
+	}
+	if !exists {
+		err = os.Mkdir(s.Path, 777)
+		if err != nil {
+			panic(err)
+		}
+	}
+	f, err := file.Open()
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	buffer := make([]byte, file.Size)
+	_, err = f.Read(buffer)
+	if err != nil {
+		return "", err
+	}
+	// 计算一次 hash
+	tmp := string(buffer)
+	hash := helper.Md5(tmp)
+
 }
 
 // Exists 是否存在
@@ -173,4 +206,64 @@ func (s *Server) GetTotal() (int, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+// SetOSSManager 设置对象存储管理器
+func (s *Server) SetOSSManager() error {
+	base := new(mod.BaseConfig)
+	// 获取一个
+	err := s.DB.Model(&mod.BaseConfig{}).Where("type = ?", mod.StoreType.QiNiu).First(base).Error
+	if err != nil {
+		return err
+	}
+	oss := new(mod.OSSConfig)
+	err = json.Unmarshal([]byte(base.Body), oss)
+	if err != nil {
+		return err
+	}
+	// 生成管理器
+	domain := strings.Trim(oss.Domain, "/") + "/"
+	s.OSS = struct{ Key, Secret, Bucket, Domain string }{Key: oss.Key, Secret: oss.Secret, Bucket: oss.Bucket, Domain: domain}
+	mac := qbox.NewMac(s.OSS.Key, s.OSS.Secret)
+	s.Manager = storage.NewBucketManager(mac, new(storage.Config))
+	return nil
+}
+
+// SetLocalStorePath 设置本地存储路径
+func (s *Server) SetLocalStorePath() error {
+	base := new(mod.BaseConfig)
+	// 获取一个配置
+	err := s.DB.Model(&mod.BaseConfig{}).Where("type = ?", mod.StoreType.Local).First(base).Error
+	if err != nil {
+		return err
+	}
+	local := new(mod.LocalConfig)
+	err = json.Unmarshal([]byte(base.Body), local)
+	if err != nil {
+		return err
+	}
+	s.Path = local.Path
+	return nil
+}
+
+// GetStoryType 获取存储类型
+func (s *Server) GetStoryType() (mod.StoreTypeEnum, error) {
+	base := new(mod.BaseConfig)
+	err := s.DB.Model(&mod.BaseConfig{}).Where("is_open = ?", true).First(base).Error
+	if err != nil {
+		return 0, err
+	}
+	return base.Type, nil
+}
+
+// ExistsSettingStoryType 判断用户是否有设置过某种存储类型
+func (s *Server) ExistsSettingStoryType(storeType mod.StoreTypeEnum) (bool, error) {
+	base := new(mod.BaseConfig)
+
+	err := s.DB.Model(&mod.BaseConfig{}).Where("type = ?", storeType).First(base).Error
+	// 没找到
+	if gorm.IsRecordNotFoundError(err) {
+		return false, nil
+	}
+	return err == nil, err
 }

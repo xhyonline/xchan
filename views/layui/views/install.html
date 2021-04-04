@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>安装引导</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/login.css" media="all">
+</head>
+<body>
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <h2>安装引导</h2>
+            <p></p>
+        </div>
+        <div class="layadmin-user-login-box layadmin-user-login-body layui-form" style="">
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-username" for=""></label>
+                <input type="text" name="username" id="LAY-user" lay-verify="required" placeholder="管理员用户" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for=""></label>
+                <input type="password" name="password" id="" lay-verify="required" placeholder="管理员密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-home" for="LAY-user-login-username"></label>
+                <input type="text" name="host" id="host" lay-verify="required" placeholder="数据库主机" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-username" for=""></label>
+                <input type="text" name="db_username" id="LAY-user" lay-verify="required" placeholder="数据库用户" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for=""></label>
+                <input type="password" name="db_password" id="" lay-verify="required" placeholder="数据库密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-set-fill" for=""></label>
+                <input type="text" name="port" id="" lay-verify="required" placeholder="端口" class="layui-input">
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+                <input type="text" name="xchan" id="LAY-user-login-password" lay-verify="required" READONLY value="xchan" style="display: inline-block" placeholder="数据库名" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">数据库名固定为 xchan 是不能修改的喔</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="padding-left: 0;padding-right:0px; text-align: left">存储方式</label>
+                <div class="layui-input-block" style="margin-left: 0px;">
+                    <input type="radio" name="position"  lay-filter="position" class="position" value="local" title="本地存储" checked>
+                    <input type="radio" name="position" lay-filter="position" class="position" value="qiniu" title="七牛存储" >
+                </div>
+            </div>
+            <div class="qiniu" style="display: none">
+                <div class="layui-form-item">
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <input type="text" name="qiniu_key" id="" lay-verify="" placeholder="七牛云 key " class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <input type="text" name="qiniu_secret" id="" lay-verify="" placeholder="七牛云 secret " class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <input type="text" name="qiniu_bucket" id="" lay-verify="" placeholder="bucket " class="layui-input">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <input type="text" name="qiniu_domain" id="" lay-verify="" placeholder="绑定的域名:格式:https://qiniu.xhyonline.com/" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-install-submit">开始安装</button>
+            </div>
+        </div>
+    </div>
+    <div class="layui-trans layadmin-user-login-footer">
+        <p>© 2018 <a href="https://xhyonline.com" target="_blank">兰陵美酒郁金香</a></p>
+        <p>
+        </p>
+    </div>
+</div>
+
+<script src="../../layuiadmin/layui/layui.js"></script>
+
+<script>
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'user','jquery'], function(){
+        var $ = layui.$
+            ,setter = layui.setter
+            ,admin = layui.admin
+            ,form = layui.form
+            ,router = layui.router()
+            ,search = router.search;
+
+        form.render();
+
+        form.on('radio(position)', function (data) {
+           switch (data.value) {
+               case 'qiniu':
+                   $(".qiniu").show();
+                   break;
+               case 'local':
+                   $(".qiniu").hide();
+                   break;
+           }
+        });
+        //提交
+        form.on('submit(LAY-install-submit)', function(obj){
+            $.ajax({
+                url: "/install"
+                ,data: obj.field
+                ,method:"post"
+                ,success:function(data){
+                    if (data.code!=200){
+                        layer.msg(data.msg);
+                        return
+                    }
+                    layer.msg(data.msg);
+                    setTimeout(function () {
+                        window.location.href='/'
+                    },1000)
+                }
+            });
+            //请求登入接口
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
