@@ -123,7 +123,7 @@ func (s *Server) AddLocalConfig() error {
 	var tmp = "file-save-dir"
 	// 路径位置
 	conf := &mod.LocalConfig{Path: path + tmp}
-
+	s.PathDir = path + tmp
 	body, err := json.Marshal(conf)
 	if err != nil {
 		return err

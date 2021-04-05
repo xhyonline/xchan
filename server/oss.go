@@ -88,13 +88,15 @@ func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, e
 func (s *Server) UploadLocal(file *multipart.FileHeader, user string) (string, error) {
 	// 查看目录是否存在
 	exists, err := helper.PathExists(s.PathDir)
+	log.Infof("存储路径:%s", s.PathDir)
 	if err != nil {
-		log.Errorf("错误不存在:", s.PathDir)
+		log.Errorf("判断存储路径是否存在出错 %s:", err)
 		return "", err
 	}
 	if !exists {
-		err = os.Mkdir(s.PathDir, 777)
+		err = os.MkdirAll(s.PathDir, 777)
 		if err != nil {
+			log.Errorf("创建存储路径出错 %s:", err)
 			return "", err
 		}
 	}
