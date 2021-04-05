@@ -19,22 +19,20 @@ func (h *Handler) Upload(c *gin.Context) {
 		c.JSON(200, Response(400, "上传失败"+err.Error(), nil))
 		return
 	}
-
+	var src string
 	switch h.s.StoreType {
 	case mod.StoreType.QiNiu: // 如果存储类型是七牛
-		src, err := h.s.UploadQiNiu(file, t.Username)
-		if err != nil {
-			c.JSON(200, Response(400, "上传失败"+err.Error(), nil))
-			return
-		}
-		c.JSON(200, Response(200, "上传成功", gin.H{
-			"src": src,
-		}))
-		return
+		src, err = h.s.UploadQiNiu(file, t.Username)
 	case mod.StoreType.Local: // 如果存储类型是本地
-		h.s.UploadLocal(file, t.Username)
+		src, err = h.s.UploadLocal(file, t.Username)
 	}
-
+	if err != nil {
+		c.JSON(200, Response(400, "上传失败"+err.Error(), nil))
+		return
+	}
+	c.JSON(200, Response(200, "上传成功", gin.H{
+		"src": src,
+	}))
 }
 
 // Remove 删除接口

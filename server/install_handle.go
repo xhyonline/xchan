@@ -40,12 +40,12 @@ func (h *Handler) Install(c *gin.Context) {
 		c.JSON(200, Response(400, "保存配置文件失败"+err.Error(), nil))
 		return
 	}
-	err = h.s.Config.Set("db::user", user)
+	err = h.s.Config.Set("db::user", dbUser)
 	if err != nil {
 		c.JSON(200, Response(400, "保存配置文件失败"+err.Error(), nil))
 		return
 	}
-	err = h.s.Config.Set("db::password", password)
+	err = h.s.Config.Set("db::password", dbPassword)
 	if err != nil {
 		c.JSON(200, Response(400, "保存配置文件失败"+err.Error(), nil))
 		return

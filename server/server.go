@@ -30,7 +30,7 @@ type Server struct {
 	// 七牛云对象存储管理者,它负责文件的删除,但不负责文件的上传
 	Manager *storage.BucketManager
 	// 如果是本地存储,这里将会存储存储路径
-	Path string
+	PathDir string
 	// 存储类型
 	StoreType mod.StoreTypeEnum
 }

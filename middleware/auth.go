@@ -38,5 +38,5 @@ func HaveLogin(c *gin.Context) {
 		return
 	}
 	// 跳转后台
-	c.Redirect(307, "/admin")
+	c.Redirect(307, "/admin/index")
 }

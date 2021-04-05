@@ -5,8 +5,8 @@ import (
 	"github.com/xhyonline/xchan/server"
 )
 
-// InitInstall 初始化,查看用户是否安装了本软件
-func InitInstall(c *gin.Context) {
+// CheckInstall 初始化,查看用户是否安装了本软件
+func CheckInstall(c *gin.Context) {
 	s := server.GetService()
 	install, err := s.Config.GetSection("install")
 	if err != nil {
@@ -21,13 +21,11 @@ func InitInstall(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	// 如果安装了,看看 ping 的通不
-	err = s.DB.DB().Ping()
-	if err != nil {
-		c.JSON(200, server.Response(400, "数据库链接失败"+err.Error(), nil))
+	// 如果安装了,再检查一次
+	if err := s.CheckInstalled(); err != nil {
+		c.JSON(200, server.Response(400, "安装后检查失败"+err.Error(), nil))
 		c.Abort()
 		return
 	}
-	// 如果 ping 的通
 	c.Next()
 }

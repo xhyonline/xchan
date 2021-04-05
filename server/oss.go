@@ -10,6 +10,7 @@ import (
 	"github.com/qiniu/api.v7/v7/storage"
 	"github.com/xhyonline/xchan/mod"
 	"github.com/xhyonline/xutil/helper"
+	"io"
 	"mime/multipart"
 	"os"
 	"path"
@@ -85,19 +86,21 @@ func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, e
 
 // UploadLocal 上传文件到本地
 func (s *Server) UploadLocal(file *multipart.FileHeader, user string) (string, error) {
-	exists, err := helper.PathExists(s.Path)
+	// 查看目录是否存在
+	exists, err := helper.PathExists(s.PathDir)
 	if err != nil {
-		panic(err)
+		log.Errorf("错误不存在:", s.PathDir)
+		return "", err
 	}
 	if !exists {
-		err = os.Mkdir(s.Path, 777)
+		err = os.Mkdir(s.PathDir, 777)
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 	}
 	f, err := file.Open()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	defer f.Close()
 
@@ -107,9 +110,49 @@ func (s *Server) UploadLocal(file *multipart.FileHeader, user string) (string, e
 		return "", err
 	}
 	// 计算一次 hash
-	tmp := string(buffer)
-	hash := helper.Md5(tmp)
+	strBuffer := string(buffer)
+	hash := helper.Md5(strBuffer)
+	// 本地查询是否存在
+	item, exists, err := s.Exists(hash)
+	if err != nil {
+		return "", err
+	}
+	if exists {
+		return item.Path, nil
+	}
+	// 后缀
+	ext := path.Ext(file.Filename)
+	filePath := s.PathDir + `/` + hash + ext
+	if strings.Contains(filePath, `\`) {
+		filePath = s.PathDir + `\` + hash + ext
+	}
+	// 不存在则上传
+	newFile, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	reader := strings.NewReader(strBuffer)
+	if _, err = io.Copy(newFile, reader); err != nil {
+		return "", err
+	}
+	// 创建文件之后开始入库
 
+	// 入库
+	err = s.DB.Create(&mod.OSS{
+		Path:      filePath,
+		Size:      file.Size,
+		User:      user,
+		Key:       hash,
+		Name:      file.Filename,
+		Hash:      hash,
+		Ext:       path.Ext(file.Filename),
+		StoreType: mod.StoreType.Local,
+	}).Error
+
+	if err != nil {
+		return "", err
+	}
+	return filePath, nil
 }
 
 // Exists 是否存在
@@ -242,7 +285,7 @@ func (s *Server) SetLocalStorePath() error {
 	if err != nil {
 		return err
 	}
-	s.Path = local.Path
+	s.PathDir = local.Path
 	return nil
 }
 

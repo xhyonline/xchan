@@ -10,7 +10,6 @@ import (
 func main() {
 
 	s := server.GetService()
-
 	h := server.NewHandler(s)
 	g := gin.Default()
 	// 存储最大限制
@@ -27,18 +26,18 @@ func main() {
 
 	// 前端路由组与中间件
 	front := g.Group("")
-	front.Use(middleware.InitInstall, middleware.HaveLogin)
+	// 检查是否已安装、是否已登录、设置存储类型
+	front.Use(middleware.CheckInstall, middleware.HaveLogin)
 	{
 		front.GET("/", h.Login)
 		// 登录
 		front.POST("/login-check", h.LoginCheck)
 	}
-
+	// 安装路由
 	g.POST("/install", h.Install)
-
 	// 后台路由组
 	admin := g.Group("/admin")
-	admin.Use(middleware.Auth)
+	admin.Use(middleware.Auth, middleware.CheckInstall)
 	{
 		// 后台首页
 		admin.GET("/index", h.Admin)
