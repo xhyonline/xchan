@@ -37,6 +37,8 @@ func main() {
 	}
 	// 安装路由
 	g.POST("/install", h.Install)
+	//
+	g.GET("/install-view", h.InstallView)
 	// 后台路由组
 	admin := g.Group("/admin")
 	admin.Use(middleware.Auth, middleware.CheckInstall)
@@ -67,7 +69,7 @@ func main() {
 		admin.GET("/setting", h.Setting)
 	}
 
-	err := g.Run("0.0.0.0:80")
+	err := g.Run("0.0.0.0:8080")
 	if err != nil {
 		panic(err)
 	}

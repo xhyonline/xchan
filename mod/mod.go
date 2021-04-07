@@ -51,6 +51,8 @@ type OSS struct {
 	TimeFormat string `json:"time" gorm:"-"`
 	// 存储类型
 	StoreType StoreTypeEnum `gorm:"tinyint(1)"`
+	// 本地文件存放地址
+	LocalFilePath string
 }
 
 // BaseConfig 基础配置

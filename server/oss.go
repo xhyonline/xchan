@@ -137,23 +137,25 @@ func (s *Server) UploadLocal(file *multipart.FileHeader, user string) (string, e
 	if _, err = io.Copy(newFile, reader); err != nil {
 		return "", err
 	}
+	src := s.LocalDomain + hash + ext
 	// 创建文件之后开始入库
 	// 入库
 	err = s.DB.Create(&mod.OSS{
-		Path:      s.LocalDomain + hash + ext,
-		Size:      file.Size,
-		User:      user,
-		Key:       hash,
-		Name:      file.Filename,
-		Hash:      hash,
-		Ext:       ext,
-		StoreType: mod.StoreType.Local,
+		Path:          src,
+		Size:          file.Size,
+		User:          user,
+		Key:           hash,
+		Name:          file.Filename,
+		Hash:          hash,
+		Ext:           ext,
+		StoreType:     mod.StoreType.Local,
+		LocalFilePath: filePath,
 	}).Error
 
 	if err != nil {
 		return "", err
 	}
-	return filePath, nil
+	return src, nil
 }
 
 // Exists 是否存在

@@ -16,8 +16,7 @@ func CheckInstall(c *gin.Context) {
 	}
 	// 如果没安装.直接弹出安装界面
 	if install["have_install"] == "false" {
-		log.Infof("用户还没安装")
-		c.HTML(200, "install.html", nil)
+		c.Redirect(307, "/install-view")
 		c.Abort()
 		return
 	}

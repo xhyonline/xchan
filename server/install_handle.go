@@ -114,3 +114,8 @@ func (h *Handler) Install(c *gin.Context) {
 
 	c.JSON(200, Response(200, "安装成功", nil))
 }
+
+func (h *Handler) InstallView(c *gin.Context) {
+	log.Infof("用户还没安装")
+	c.HTML(200, "install.html", nil)
+}

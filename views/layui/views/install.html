@@ -60,7 +60,7 @@
             <div class="local" style="">
                 <div class="layui-form-item">
                     <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
-                    <input type="text" name="local_domain" id="" lay-verify="" placeholder="站点URL,示例:http://127.0.0.1" class="layui-input">
+                    <input type="text" name="local_domain" readonly value="" id="" lay-verify="" placeholder="站点URL,示例:http://127.0.0.1" class="layui-input">
                 </div>
             </div>
             <div class="qiniu" style="display: none">
@@ -111,6 +111,10 @@
 
         form.render();
 
+
+        var url=window.location.protocol+"//"+window.location.host
+
+        $(".local input").val(url);
         form.on('radio(position)', function (data) {
            switch (data.value) {
                case 'qiniu':
