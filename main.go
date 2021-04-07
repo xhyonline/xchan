@@ -23,6 +23,8 @@ func main() {
 	g.StaticFS("/layuiadmin", http.Dir("./views/layui/layuiadmin"))
 	// jquery 拖拽上传插件
 	g.StaticFS("/drop", http.Dir("./views/dist"))
+	// 本地文件存储位置
+	g.StaticFS("/file-save-dir", http.Dir("./file-save-dir"))
 
 	// 前端路由组与中间件
 	front := g.Group("")

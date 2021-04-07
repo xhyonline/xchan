@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/xhyonline/xchan/mod"
+	"strings"
 	"time"
 )
 
@@ -115,14 +116,16 @@ func (s *Server) AddQiNiuConfig(key, secret, bucket, domain string) error {
 }
 
 // AddLocalConfig 新增本地存储配置
-func (s *Server) AddLocalConfig() error {
+func (s *Server) AddLocalConfig(domain string) error {
 	path, err := GetCurrentPath()
 	if err != nil {
 		return err
 	}
 	var tmp = "file-save-dir"
+	domain = strings.Trim(domain, "/") + "/" + tmp + "/"
+	s.LocalDomain = domain
 	// 路径位置
-	conf := &mod.LocalConfig{Path: path + tmp}
+	conf := &mod.LocalConfig{Path: path + tmp, Domain: domain}
 	s.PathDir = path + tmp
 	body, err := json.Marshal(conf)
 	if err != nil {

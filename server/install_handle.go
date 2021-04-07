@@ -5,6 +5,7 @@ import (
 	"github.com/qiniu/api.v7/v7/auth/qbox"
 	"github.com/qiniu/api.v7/v7/storage"
 	"github.com/xhyonline/xchan/mod"
+	"github.com/xhyonline/xutil/helper"
 	"strings"
 )
 
@@ -20,7 +21,17 @@ func (h *Handler) Install(c *gin.Context) {
 	key := c.PostForm("qiniu_key")
 	secret := c.PostForm("qiniu_secret")
 	bucket := c.PostForm("qiniu_bucket")
-	domain := c.PostForm("qiniu_domain")
+	qiNiuDomain := c.PostForm("qiniu_domain")
+	localDomain := c.PostForm("local_domain")
+
+	if position == "local" && !helper.IsURL(localDomain) {
+		c.JSON(200, Response(400, "URL 不符合规范", nil))
+		return
+	}
+	if position == "qiniu" && !helper.IsURL(qiNiuDomain) {
+		c.JSON(200, Response(400, "URL 不符合规范", nil))
+		return
+	}
 
 	// 尝试链接数据库
 	err := h.s.ConnectDB(host, dbUser, dbPassword, port, "xchan")
@@ -62,20 +73,20 @@ func (h *Handler) Install(c *gin.Context) {
 	switch position {
 	case "local":
 		h.s.StoreType = mod.StoreType.Local
-		err = h.s.AddLocalConfig()
+		err = h.s.AddLocalConfig(localDomain)
 		if err != nil {
 			c.JSON(200, Response(400, "保存配置文件失败"+err.Error(), nil))
 			return
 		}
 	case "qiniu":
 		h.s.StoreType = mod.StoreType.QiNiu
-		err = h.s.AddQiNiuConfig(key, secret, bucket, domain)
+		err = h.s.AddQiNiuConfig(key, secret, bucket, qiNiuDomain)
 		if err != nil {
 			c.JSON(200, Response(400, "保存配置文件失败"+err.Error(), nil))
 			return
 		}
 		// 生成管理器
-		domain := strings.Trim(domain, "/") + "/"
+		domain := strings.Trim(qiNiuDomain, "/") + "/"
 		h.s.OSS = struct{ Key, Secret, Bucket, Domain string }{Key: key, Secret: secret, Bucket: bucket, Domain: domain}
 		mac := qbox.NewMac(h.s.OSS.Key, h.s.OSS.Secret)
 		h.s.Manager = storage.NewBucketManager(mac, new(storage.Config))

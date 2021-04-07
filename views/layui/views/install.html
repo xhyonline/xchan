@@ -57,6 +57,12 @@
                     <input type="radio" name="position" lay-filter="position" class="position" value="qiniu" title="七牛存储" >
                 </div>
             </div>
+            <div class="local" style="">
+                <div class="layui-form-item">
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <input type="text" name="local_domain" id="" lay-verify="" placeholder="站点URL,示例:http://127.0.0.1" class="layui-input">
+                </div>
+            </div>
             <div class="qiniu" style="display: none">
                 <div class="layui-form-item">
                     <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
@@ -109,9 +115,11 @@
            switch (data.value) {
                case 'qiniu':
                    $(".qiniu").show();
+                   $(".local").hide();
                    break;
                case 'local':
                    $(".qiniu").hide();
+                   $(".local").show();
                    break;
            }
         });

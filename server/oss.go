@@ -138,16 +138,15 @@ func (s *Server) UploadLocal(file *multipart.FileHeader, user string) (string, e
 		return "", err
 	}
 	// 创建文件之后开始入库
-
 	// 入库
 	err = s.DB.Create(&mod.OSS{
-		Path:      filePath,
+		Path:      s.LocalDomain + hash + ext,
 		Size:      file.Size,
 		User:      user,
 		Key:       hash,
 		Name:      file.Filename,
 		Hash:      hash,
-		Ext:       path.Ext(file.Filename),
+		Ext:       ext,
 		StoreType: mod.StoreType.Local,
 	}).Error
 
@@ -288,6 +287,7 @@ func (s *Server) SetLocalStorePath() error {
 		return err
 	}
 	s.PathDir = local.Path
+	s.LocalDomain = local.Domain
 	return nil
 }
 

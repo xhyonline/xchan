@@ -78,6 +78,8 @@ type OSSConfig struct {
 
 // LocalConfig 本地存储配置,,不是数据表
 type LocalConfig struct {
+	// 本地存储域名
+	Domain string `json:"domain"`
 	// 存储的绝对路径目录
 	Path string `json:"path"`
 }

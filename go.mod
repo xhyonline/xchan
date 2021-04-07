@@ -13,11 +13,9 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/qiniu/api.v7/v7 v7.8.2
 	github.com/ugorji/go v1.2.4 // indirect
-	github.com/xhyonline/xutil v0.0.0-20210202055254-d236fcadc7b0
+	github.com/xhyonline/xutil v0.0.0-20210407035656-f3c7abd497b0
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/sys v0.0.0-20210305230114-8fe3ee5dd75b // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/driver/mysql v1.0.5 // indirect
-	gorm.io/gorm v1.21.6 // indirect
 )

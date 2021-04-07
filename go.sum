@@ -220,6 +220,8 @@ github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c/go.mod h1:lB8K/P019DLNhe
 github.com/xdg/stringprep v1.0.0/go.mod h1:Jhud4/sHMO4oL310DaZAKk9ZaJ08SJfe+sJh0HrGL1Y=
 github.com/xhyonline/xutil v0.0.0-20210202055254-d236fcadc7b0 h1:5Ijcfn1pCnQbMqzLUP0q/8jDP/+QK4wxS3v4lJc/380=
 github.com/xhyonline/xutil v0.0.0-20210202055254-d236fcadc7b0/go.mod h1:mPYKUeJtYQN1SIax67MQTLhfvwvzSDThWBcsMaPtses=
+github.com/xhyonline/xutil v0.0.0-20210407035656-f3c7abd497b0 h1:0SsmbMMpSFpkPQDXcoIbdkFb0b5Sdcxo2QuLz5Nb9Eo=
+github.com/xhyonline/xutil v0.0.0-20210407035656-f3c7abd497b0/go.mod h1:jXJsj1+lo8bbqtLYoxRdApK6dLO7Wy+vCNcMrwfQIAo=
 github.com/yuin/gopher-lua v0.0.0-20171031051903-609c9cd26973/go.mod h1:aEV29XrmTYFr3CiRxZeGHpkvbwq+prZduBqMaascyCU=
 golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
