@@ -7,10 +7,24 @@ import (
 	"github.com/xhyonline/xchan/mod"
 	"github.com/xhyonline/xutil/helper"
 	"strings"
+	"sync/atomic"
 )
+
+var atomicLock = new(uint32) // 防抖锁
 
 // Install 安装方法
 func (h *Handler) Install(c *gin.Context) {
+	// 后端防抖,防止手快直接点了两下安装,导致安装了两次,为 1 时代表正在安装
+	if atomic.LoadUint32(atomicLock) == 1 {
+		// 已经开始了安装程序
+		c.JSON(200, Response(400, "正在安装中,请稍后呢~", nil))
+		return
+	}
+	// 安装中
+	atomic.StoreUint32(atomicLock, 1)
+	// 当然我们不排除安装出错,所以最后还要解锁,让用户配置正确
+	defer atomic.StoreUint32(atomicLock, 0)
+
 	host := c.PostForm("host")
 	user := c.PostForm("username")
 	password := c.PostForm("password")
@@ -69,6 +83,9 @@ func (h *Handler) Install(c *gin.Context) {
 
 	// 第二步,表同步
 	h.s.DB.AutoMigrate(&mod.User{}, &mod.OSS{}, &mod.BaseConfig{})
+
+	// 后端防抖
+
 	// 第三步,判断是哪个存储
 	switch position {
 	case "local":
