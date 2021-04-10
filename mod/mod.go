@@ -31,7 +31,7 @@ type OSS struct {
 	model.Addon
 	// 文件名
 	Name string `json:"name"`
-	// 存储路径
+	// 存储路径是一个 URL
 	Path string `gorm:"index" json:"path"`
 	// OSS key
 	Key string `json:"key"`
@@ -51,7 +51,7 @@ type OSS struct {
 	TimeFormat string `json:"time" gorm:"-"`
 	// 存储类型
 	StoreType StoreTypeEnum `gorm:"tinyint(1)"`
-	// 本地文件存放地址
+	// 本地文件存放地址,注意七牛云是没有的
 	LocalFilePath string
 }
 

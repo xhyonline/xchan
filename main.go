@@ -11,7 +11,7 @@ import (
 var log = xlog.Get(true)
 
 func main() {
-	log.Infof("程序启动了")
+
 	s := server.GetService()
 	h := server.NewHandler(s)
 	g := gin.Default()

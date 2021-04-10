@@ -177,10 +177,16 @@ func (s *Server) Remove(id string) error {
 	if err != nil {
 		return err
 	}
-	err = s.Manager.Delete(s.OSS.Bucket, n.Key)
+	switch n.StoreType {
+	case mod.StoreType.Local: // 本地存储
+		err = os.Remove(n.LocalFilePath)
+	case mod.StoreType.QiNiu: // 七牛存储
+		err = s.Manager.Delete(s.OSS.Bucket, n.Key)
+	}
 	if err != nil {
 		return err
 	}
+
 	// 删除数据库的数据
 	err = s.DB.Debug().Where("id = ?", id).Delete(&mod.OSS{}).Error
 	if err != nil {
