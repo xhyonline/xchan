@@ -4,11 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/xhyonline/xchan/middleware"
 	"github.com/xhyonline/xchan/server"
+	"github.com/xhyonline/xutil/xlog"
 	"net/http"
 )
 
-func main() {
+var log = xlog.Get(true)
 
+func main() {
+	log.Infof("程序启动了")
 	s := server.GetService()
 	h := server.NewHandler(s)
 	g := gin.Default()
@@ -69,7 +72,7 @@ func main() {
 		admin.GET("/setting", h.Setting)
 	}
 
-	err := g.Run("0.0.0.0:8080")
+	err := g.Run("0.0.0.0:80")
 	if err != nil {
 		panic(err)
 	}

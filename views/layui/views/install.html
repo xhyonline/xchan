@@ -29,7 +29,7 @@
                 <input type="password" name="password" id="" lay-verify="required" placeholder="管理员密码" class="layui-input">
             </div>
             <div class="layui-form-item">
-                <label class="layadmin-user-login-icon layui-icon layui-icon-home" for="LAY-user-login-username"></label>
+                <label class="layadmin-user-login-icon layui-icon layui-icon-home" ></label>
                 <input type="text" name="host" id="host" lay-verify="required" placeholder="数据库主机" class="layui-input">
             </div>
             <div class="layui-form-item">
@@ -59,25 +59,26 @@
             </div>
             <div class="local" style="">
                 <div class="layui-form-item">
-                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
-                    <input type="text" name="local_domain" readonly value="" id="" lay-verify="" placeholder="站点URL,示例:http://127.0.0.1" class="layui-input">
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" ></label>
+                    <input type="text" name="local_domain" value="" id="" lay-verify="" placeholder="站点URL,示例:http://127.0.0.1" class="layui-input">
+                    <div class="layui-form-mid layui-word-aux">生成URL使用,例:http://127.0.0.1/file-save-dir/xxx.jpg</div>
                 </div>
             </div>
             <div class="qiniu" style="display: none">
                 <div class="layui-form-item">
-                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" ></label>
                     <input type="text" name="qiniu_key" id="" lay-verify="" placeholder="七牛云 key " class="layui-input">
                 </div>
                 <div class="layui-form-item">
-                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" ></label>
                     <input type="text" name="qiniu_secret" id="" lay-verify="" placeholder="七牛云 secret " class="layui-input">
                 </div>
                 <div class="layui-form-item">
-                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" ></label>
                     <input type="text" name="qiniu_bucket" id="" lay-verify="" placeholder="bucket " class="layui-input">
                 </div>
                 <div class="layui-form-item">
-                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" ></label>
                     <input type="text" name="qiniu_domain" id="" lay-verify="" placeholder="绑定的域名:格式:https://qiniu.xhyonline.com/" class="layui-input">
                 </div>
             </div>
@@ -111,10 +112,7 @@
 
         form.render();
 
-
-        var url=window.location.protocol+"//"+window.location.host
-
-        $(".local input").val(url);
+        
         form.on('radio(position)', function (data) {
            switch (data.value) {
                case 'qiniu':

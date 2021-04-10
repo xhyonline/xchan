@@ -13,7 +13,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/qiniu/api.v7/v7 v7.8.2
 	github.com/ugorji/go v1.2.4 // indirect
-	github.com/xhyonline/xutil v0.0.0-20210407035656-f3c7abd497b0
+	github.com/xhyonline/xutil v0.0.0-20210408152751-84ef3becb280
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/sys v0.0.0-20210305230114-8fe3ee5dd75b // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
