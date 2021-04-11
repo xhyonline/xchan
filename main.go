@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/xhyonline/xchan/middleware"
 	"github.com/xhyonline/xchan/server"
@@ -11,6 +12,9 @@ import (
 var log = xlog.Get(true)
 
 func main() {
+	var port string
+	flag.StringVar(&port, "p", "80", "项目启动的端口号,默认80端口")
+	flag.Parse()
 
 	s := server.GetService()
 	h := server.NewHandler(s)
@@ -70,9 +74,14 @@ func main() {
 		admin.POST("/exec/update-user", h.UpdateUserItem)
 		// 设置界面
 		admin.GET("/setting", h.Setting)
+		admin.POST("/exec/setting", h.UpdateSetting)
 	}
 
-	err := g.Run("0.0.0.0:80")
+	if port == "" {
+		port = "80"
+	}
+	log.Info("项目将会启动监听在" + port + "端口")
+	err := g.Run("0.0.0.0:" + port)
 	if err != nil {
 		panic(err)
 	}

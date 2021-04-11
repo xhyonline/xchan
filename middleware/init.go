@@ -16,6 +16,7 @@ func CheckInstall(c *gin.Context) {
 	}
 	// 如果没安装.直接弹出安装界面
 	if install["have_install"] == "false" {
+		c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
 		c.Redirect(307, "/install-view")
 		c.Abort()
 		return

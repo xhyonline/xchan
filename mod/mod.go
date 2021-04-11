@@ -1,6 +1,8 @@
 package mod
 
 import (
+	"fmt"
+	"github.com/xhyonline/xutil/helper"
 	"github.com/xhyonline/xutil/model"
 )
 
@@ -66,8 +68,8 @@ type BaseConfig struct {
 	IsOpen bool
 }
 
-// OSSConfig 对象存储配置 ,不是数据表
-type OSSConfig struct {
+// QiNiuOSSConfig 七牛对象存储配置 ,不是数据表
+type QiNiuOSSConfig struct {
 	// 七牛云 KEY
 	Key string `json:"key"`
 	// 七牛云 Secret
@@ -76,6 +78,16 @@ type OSSConfig struct {
 	Bucket string `json:"bucket"`
 	// 绑定的七牛云域名
 	Domain string `json:"domain"`
+}
+
+func (data *QiNiuOSSConfig) Validate() error {
+	if data.Key == "" || data.Domain == "" || data.Secret == "" || data.Bucket == "" {
+		return fmt.Errorf("请填写完整配置喔")
+	}
+	if !helper.IsURL(data.Domain) {
+		return fmt.Errorf("七牛云绑定的 URL 格式不正确")
+	}
+	return nil
 }
 
 // LocalConfig 本地存储配置,,不是数据表

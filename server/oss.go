@@ -268,7 +268,7 @@ func (s *Server) SetOSSManager() error {
 	if err != nil {
 		return err
 	}
-	oss := new(mod.OSSConfig)
+	oss := new(mod.QiNiuOSSConfig)
 	err = json.Unmarshal([]byte(base.Body), oss)
 	if err != nil {
 		return err
@@ -310,13 +310,19 @@ func (s *Server) GetStoryType() (mod.StoreTypeEnum, error) {
 }
 
 // ExistsSettingStoryType 判断用户是否有设置过某种存储类型
-func (s *Server) ExistsSettingStoryType(storeType mod.StoreTypeEnum) (bool, error) {
+func (s *Server) ExistsSettingStoryType(storeType mod.StoreTypeEnum) (*mod.BaseConfig, bool, error) {
 	base := new(mod.BaseConfig)
 
 	err := s.DB.Model(&mod.BaseConfig{}).Where("type = ?", storeType).First(base).Error
 	// 没找到
 	if gorm.IsRecordNotFoundError(err) {
-		return false, nil
+		return nil, false, nil
 	}
-	return err == nil, err
+	return base, err == nil, err
+}
+
+// FindStoreFileByStoreType 获取文件
+func (s *Server) FindStoreFileByStoreType(store mod.StoreTypeEnum) ([]*mod.OSS, error) {
+	resp := make([]*mod.OSS, 0)
+	return resp, s.DB.Model(&mod.OSS{}).Where("store_type = ?", store).Find(&resp).Error
 }

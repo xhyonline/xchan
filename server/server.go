@@ -8,6 +8,7 @@ import (
 	"github.com/qiniu/api.v7/v7/storage"
 	"github.com/xhyonline/xchan/mod"
 	"github.com/xhyonline/xutil/xlog"
+	"strings"
 	"sync"
 )
 
@@ -47,6 +48,16 @@ func GetService() *Server {
 		instance = s
 	})
 	return instance
+}
+
+// GetCurrentStoreType 获取当前的存储类型
+func (s *Server) GetCurrentStoreType() mod.StoreTypeEnum {
+	return s.StoreType
+}
+
+// GetLocalDomain 获取当前本地上传的域名
+func (s *Server) GetLocalDomain() string {
+	return strings.Replace(s.LocalDomain, "/file-save-dir/", "", 1)
 }
 
 // Handler

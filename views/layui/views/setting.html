@@ -35,39 +35,54 @@
 
                 <form class="layui-form" action="" style="margin-top: 20px;">
                     <div class="layui-form-item">
-                        <label class="layui-form-label">单选框</label>
+                        <label class="layui-form-label">切换类型</label>
                         <div class="layui-input-block">
-                            <input type="radio" name="position" value="local" title="本地存储">
-                            <input type="radio" name="position" value="qiniu" title="七牛云存储" checked>
+                            <input type="radio" name="position" lay-filter="position" value="local" title="本地存储" <go if eq .storeType 1  go>  checked  <go end go>>
+                            <input type="radio" name="position" lay-filter="position" value="qiniu" title="七牛云存储" <go if eq .storeType 2  go>  checked  <go end go>  >
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">管理员账号</label>
-                        <div class="layui-input-block">
-                            <input type="text"  name="user_name" required  lay-verify="required"  value="<go .username go>" readonly autocomplete="off" class="layui-input input">
+                    <div class="local"  <go if eq .storeType 2  go>  hidden  <go end go>>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">当前域名</label>
+                            <div class="layui-input-block">
+                                <input type="text"  name="local_domain"    <go if eq .local_domain ""   go>  placeholder="格式:http://127.0.0.1 或 https" <go  else  go> value="<go .local_domain go>" <go end go>  autocomplete="off" class="layui-input input">
+                            </div>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">旧密码</label>
-                        <div class="layui-input-block">
-                            <input type="text"  name="old_password" required  lay-verify="required" placeholder="请输入新管理员旧密码" autocomplete="off" class="layui-input input">
+
+                    <div class="qiniu" <go if eq .storeType 1  go>  hidden  <go end go>>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">key</label>
+                            <div class="layui-input-block">
+                                <input type="text"  name="qiniu_key"   <go if eq .qiniu_key ""   go>  placeholder="您还未设置七牛云key呢" <go  else  go> value="<go .qiniu_key go>" <go end go>   autocomplete="off" class="layui-input input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">secret</label>
+                            <div class="layui-input-block">
+                                <input type="text"  name="qiniu_secret"  <go if eq .qiniu_secret ""   go>  placeholder="您还未设置七牛云secret呢" <go  else  go> value="<go .qiniu_secret go>" <go end go>  autocomplete="off" class="layui-input input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">bucket</label>
+                            <div class="layui-input-block">
+                                <input type="text"  name="qiniu_bucket"   <go if eq .qiniu_bucket ""   go>  placeholder="您还未设置七牛云bucket呢" <go  else  go> value="<go .qiniu_bucket go>" <go end go>   autocomplete="off" class="layui-input input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">七牛云域名</label>
+                            <div class="layui-input-block">
+                                <input type="text"  name="qiniu_domain"   <go if eq .qiniu_domain ""   go>  placeholder="格式:http://qiniu.xhyonline.com/ 或 https" <go  else  go> value="<go .qiniu_domain go>" <go end go>    autocomplete="off" class="layui-input input">
+                            </div>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">新密码</label>
-                        <div class="layui-input-block">
-                            <input type="text"  name="new_password" required  lay-verify="required" placeholder="请再次管理员新密码" autocomplete="off" class="layui-input input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">确认新密码</label>
-                        <div class="layui-input-block">
-                            <input type="text"  name="re_password" required  lay-verify="required" placeholder="请再次确认输入" autocomplete="off" class="layui-input input">
-                        </div>
-                    </div>
+
+
+
+
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit lay-filter="update-user-form">立即提交</button>
+                            <button class="layui-btn" lay-submit lay-filter="update-setting">立即提交</button>
                             <button type="reset" class="layui-btn layui-btn-primary reset">重置</button>
                         </div>
                     </div>
@@ -84,24 +99,45 @@
 
         var form = layui.form;
         //监听提交
-        form.on('submit(update-user-form)', function(data){
+        form.on('submit(update-setting)', function(data){
             $.ajax({
                 method:"POST",
-                url:"/admin/exec/update-user",
-                dataType:'json',
-                contentType:"application/json",
-                data:JSON.stringify(data.field),
+                url:"/admin/exec/setting",
+                data:data.field,
                 success:function (res) {
                     layer.msg(res.msg)
                     if (res.code!=200){
                         return false
                     }
-                    // parent.location.href = "http://localhost/";
-                    parent.location.href = "/";
                 }
             });
             return false;
         });
+
+        form.on('radio(position)', function(data){
+
+            var position = data.value;
+
+            switch (position) {
+                case "local":
+                    $(".local").show();
+                    $(".qiniu").hide();
+                    $(".checkout_position").val("1");
+                    break;
+                case "qiniu":
+                    $(".qiniu").show();
+                    $(".local").hide();
+                    $(".checkout_position").val("2");
+                    break;
+            }
+
+
+
+        });
+
+        
+        
+        
     });
 </script>
 </html>

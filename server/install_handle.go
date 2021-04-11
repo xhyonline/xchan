@@ -89,15 +89,18 @@ func (h *Handler) Install(c *gin.Context) {
 	// 第三步,判断是哪个存储
 	switch position {
 	case "local":
-		h.s.StoreType = mod.StoreType.Local
 		err = h.s.AddLocalConfig(localDomain)
 		if err != nil {
 			c.JSON(200, Response(400, "保存配置文件失败"+err.Error(), nil))
 			return
 		}
 	case "qiniu":
-		h.s.StoreType = mod.StoreType.QiNiu
-		err = h.s.AddQiNiuConfig(key, secret, bucket, qiNiuDomain)
+		err = h.s.AddQiNiuConfig(&mod.QiNiuOSSConfig{
+			Key:    key,
+			Secret: secret,
+			Bucket: bucket,
+			Domain: qiNiuDomain,
+		})
 		if err != nil {
 			c.JSON(200, Response(400, "保存配置文件失败"+err.Error(), nil))
 			return
