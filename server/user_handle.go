@@ -17,19 +17,19 @@ func (h *Handler) AddUserItem(c *gin.Context) {
 	item := new(User)
 	err := c.Bind(item)
 	if err != nil {
-		c.JSON(200, response(400, err.Error(), nil))
+		c.JSON(200, Response(400, err.Error(), nil))
 		return
 	}
 	if item.Password != item.RePassword {
-		c.JSON(200, response(400, "两次密码不匹配", nil))
+		c.JSON(200, Response(400, "两次密码不匹配", nil))
 		return
 	}
 	err = h.s.AddUser(item)
 	if err != nil {
-		c.JSON(200, response(400, err.Error(), nil))
+		c.JSON(200, Response(400, err.Error(), nil))
 		return
 	}
-	c.JSON(200, response(200, "新增成功", nil))
+	c.JSON(200, Response(200, "新增成功", nil))
 }
 
 // UpdateUserItem 修改一个用户
@@ -37,15 +37,15 @@ func (h *Handler) UpdateUserItem(c *gin.Context) {
 	item := new(User)
 	err := c.Bind(item)
 	if err != nil {
-		c.JSON(200, response(400, err.Error(), nil))
+		c.JSON(200, Response(400, err.Error(), nil))
 		return
 	}
 	err = h.s.UpdateUser(item)
 	if err != nil {
-		c.JSON(200, response(400, err.Error(), nil))
+		c.JSON(200, Response(400, err.Error(), nil))
 		return
 	}
 	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
-	c.JSON(200, response(200, "修改成功", nil))
+	c.JSON(200, Response(200, "修改成功", nil))
 	return
 }

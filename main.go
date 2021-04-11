@@ -1,19 +1,26 @@
 package main
 
 import (
+	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/xhyonline/xchan/middleware"
-	"github.com/xhyonline/xchan/mod"
 	"github.com/xhyonline/xchan/server"
+	"github.com/xhyonline/xutil/xlog"
 	"net/http"
 )
 
+var log = xlog.Get(true)
+
 func main() {
+	var port string
+	flag.StringVar(&port, "p", "80", "项目启动的端口号,默认80端口")
+	flag.Parse()
+
 	s := server.GetService()
-	s.DB.AutoMigrate(&mod.User{}, &mod.OSS{})
 	h := server.NewHandler(s)
 	g := gin.Default()
-	g.MaxMultipartMemory = 20480 << 20 // 8 MiB
+	// 存储最大限制
+	g.MaxMultipartMemory = 20480 << 20
 	// 修改模板标签
 	g.Delims("<go", "go>")
 	// 前端 HTML 文件
@@ -23,14 +30,25 @@ func main() {
 	g.StaticFS("/layuiadmin", http.Dir("./views/layui/layuiadmin"))
 	// jquery 拖拽上传插件
 	g.StaticFS("/drop", http.Dir("./views/dist"))
+	// 本地文件存储位置
+	g.StaticFS("/file-save-dir", http.Dir("./file-save-dir"))
 
-	// 登录
-	g.GET("/", h.Login)
-	g.POST("/login-check", h.LoginCheck)
-
+	// 前端路由组与中间件
+	front := g.Group("")
+	// 检查是否已安装、是否已登录、设置存储类型
+	front.Use(middleware.CheckInstall, middleware.HaveLogin)
+	{
+		front.GET("/", h.Login)
+		// 登录
+		front.POST("/login-check", h.LoginCheck)
+	}
+	// 安装路由
+	g.POST("/install", h.Install)
+	//
+	g.GET("/install-view", h.InstallView)
 	// 后台路由组
 	admin := g.Group("/admin")
-	admin.Use(middleware.Auth)
+	admin.Use(middleware.Auth, middleware.CheckInstall)
 	{
 		// 后台首页
 		admin.GET("/index", h.Admin)
@@ -54,9 +72,16 @@ func main() {
 		admin.POST("/exec/add-user", h.AddUserItem)
 		// 执行修改用户
 		admin.POST("/exec/update-user", h.UpdateUserItem)
+		// 设置界面
+		admin.GET("/setting", h.Setting)
+		admin.POST("/exec/setting", h.UpdateSetting)
 	}
 
-	err := g.Run("0.0.0.0:80")
+	if port == "" {
+		port = "80"
+	}
+	log.Info("项目将会启动监听在" + port + "端口")
+	err := g.Run("0.0.0.0:" + port)
 	if err != nil {
 		panic(err)
 	}
