@@ -187,9 +187,9 @@
     $("#my-awesome-dropzone").dropzone({
         url: "/admin/upload", //上传地址
         method: "post", //方式
-        async:false,
         maxFilesize:2048,
         filesizeBase: 1024,
+        timeout: 18000000,    // 毫秒
         previewTemplate: document.querySelector('#preview-template').innerHTML,
         init:function (){
             this.on("sending", function(file,xhr,formData) {  //文件上传前调用
