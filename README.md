@@ -42,5 +42,60 @@ xchan 是一个用Golang开发的对象存储工具,适合供个人开发者使�
 3. 运行编译后的文件,项目会启动在 80 端口,您可以执行`./xchan -p 8089`切换端口,且切换后自行用 Nginx 反向代理的形式配置
 4. 直接访问即可进入安装引导界面
 
+## 六、上传超时问题解决
+
+当你使用七牛云上传时,可能会经常遇到上传失败的可能。
+
+我们存储的形式是是:   自定义域名 --> Nginx --> xchan 图床服务 --> 七牛云存储
+
+此时可能就会出现几个问题:
+
+1. 前端 JQuery 主动断开连接,这种表现形式为文件较大,JQuery 默认上传 30s 如果文件没有上传完毕,则会直接断开,最直观的现象就是下面这种
+
+   ![avatar](https://qiniu.xhyonline.com/719399578b5fe7aeb6d00e61e12d7e5e.jpg)
+
+解决方案:请直接修改代码,将前端代码中的 timeout 调高
+
+![avatar](https://qiniu.xhyonline.com/3a66b8a62af3a792524ad3d1174de8bb.png)
+
+2. 服务端超时
+
+   有可能你会遇到我们的 xchan 应用程序与 nginx 之间的超时,因此你需要像下面这样的配置
+
+![avatar](https://qiniu.xhyonline.com/8455c8ee946a79e9500ee8a918f5c8da.png)
+
+```
+server {
+       listen 443 ssl;
+        listen    [::]:443 ssl;
+        server_name xchan.xhyonline.com;
+        ssl_certificate /usr/local/ssl/5468484_xchan.xhyonline.com.pem;
+        ssl_certificate_key /usr/local/ssl/5468484_xchan.xhyonline.com.key;
+ 	client_max_body_size     2048m;
+	client_header_timeout    5m;
+	client_body_timeout      5m;
+        access_log /access.log;
+        error_log  /var/logs/error.log  error;
+	location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_connect_timeout      1500;   # 反向代理连接超时时长
+	    proxy_send_timeout         1500;   # 代理发送超时时长
+	    proxy_read_timeout         1500;   # 读取超时时长
+	    proxy_http_version 1.1;         # 开启代理服务端长链接
+	    proxy_set_header Connection "";  # 开启代理服务端长链接
+            index  index.html index.htm;
+        }
+}
+
+server {
+    listen 80;
+    server_name xchan.xhyonline.com;
+    rewrite ^(.*)$ https://$host$1 permanent;
+}
+
+```
+
+
+
 
 

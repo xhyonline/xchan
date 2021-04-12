@@ -189,14 +189,14 @@
         method: "post", //方式
         maxFilesize:2048,
         filesizeBase: 1024,
-        timeout: 18000000,    // 毫秒
+        timeout: 18000000,    // Jquery 超时 单位毫秒
         previewTemplate: document.querySelector('#preview-template').innerHTML,
         init:function (){
             this.on("sending", function(file,xhr,formData) {  //文件上传前调用
                 console.log("上传之前")
             })
             this.on("uploadprogress", function(file,progress,bytesSent) {  //文件上传监听器（file：文件、progress：上传进度n%、bytesSent：）
-                console.log("上传中"+progress)
+                // TODO:console.log("上传中"+progress)
             })
             this.on("complete", function(file,response) { //当上传完成，成功或者出现错误时调用.
                 console.log("上传结束"+response)
