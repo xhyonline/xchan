@@ -187,6 +187,7 @@
     $("#my-awesome-dropzone").dropzone({
         url: "/admin/upload", //上传地址
         method: "post", //方式
+        async:false,
         maxFilesize:2048,
         filesizeBase: 1024,
         previewTemplate: document.querySelector('#preview-template').innerHTML,
