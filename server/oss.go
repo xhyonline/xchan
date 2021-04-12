@@ -59,7 +59,7 @@ func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, e
 	}
 	// 不存在则上传
 	r := strings.NewReader(tmp)
-	err = formUploader.Put(context.Background(), &ret, upToken, hash, r, file.Size, putExtra)
+	err = formUploader.Put(context.Background(), &ret, upToken, hash+path.Ext(file.Filename), r, file.Size, putExtra)
 	if err != nil {
 		return "", err
 	}
