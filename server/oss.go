@@ -65,7 +65,6 @@ func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, e
 	}
 
 	src := s.OSS.Domain + ret.Key
-
 	// 入库
 	err = s.DB.Create(&mod.OSS{
 		Path:      src,
