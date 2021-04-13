@@ -59,10 +59,13 @@ func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, e
 	}
 	// 不存在则上传
 	r := strings.NewReader(tmp)
+	log.Info("开始上传七牛云")
 	err = formUploader.Put(context.Background(), &ret, upToken, hash+path.Ext(file.Filename), r, file.Size, putExtra)
 	if err != nil {
+		log.Errorf("七牛云上传失败 %s", err)
 		return "", err
 	}
+	log.Info("上传至七牛云完毕")
 
 	src := s.OSS.Domain + ret.Key
 	// 入库
