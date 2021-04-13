@@ -155,10 +155,6 @@ func (s *Server) UpdateOrAddLocalSetting(domain string) error {
 		return fmt.Errorf("本地绑定的 URL 格式不正确")
 	}
 	domain = strings.Trim(domain, "/")
-	// 如果没有修改最好
-	if s.GetLocalDomain() == domain {
-		return nil
-	}
 	// 判断记录是否存在
 	item, exists, err := s.ExistsSettingStoryType(mod.StoreType.Local)
 	if err != nil {
@@ -255,7 +251,7 @@ func (s *Server) UpdateOrAddQiNiuSetting(data *mod.QiNiuOSSConfig) error {
 // OpenStoryType 开启存储类型,其它都关闭
 func (s *Server) OpenStoreTypeCloseOther(store mod.StoreTypeEnum) error {
 	// 开启该设置
-	if err := s.DB.Model(&mod.BaseConfig{}).Where("type = ?", store).Updates(map[string]interface{}{
+	if err := s.DB.Debug().Model(&mod.BaseConfig{}).Where("type = ?", store).Updates(map[string]interface{}{
 		"is_open": true,
 	}).Error; err != nil {
 		return err
