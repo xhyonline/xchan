@@ -6,19 +6,19 @@ import (
 	"github.com/xhyonline/xutil/xlog"
 )
 
-var log = xlog.Get(true)
+var logger = xlog.Get().Debug()
 
 // Auth 初步鉴权
 func Auth(c *gin.Context) {
 	token, err := c.Cookie("token")
 	if err != nil {
-		log.Infof("请求后台权限不足")
+		logger.Infof("请求后台权限不足")
 		c.Redirect(307, "/")
 		return
 	}
 	s := server.GetService()
 	if _, err = s.ParseToken(token); err != nil {
-		log.Infof("请求后台权限不足")
+		logger.Infof("请求后台权限不足")
 		c.Redirect(307, "/")
 		return
 	}

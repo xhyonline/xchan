@@ -59,13 +59,13 @@ func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, e
 	}
 	// 不存在则上传
 	r := strings.NewReader(tmp)
-	log.Info("开始上传七牛云")
+	logger.Info("开始上传七牛云")
 	err = formUploader.Put(context.Background(), &ret, upToken, hash+path.Ext(file.Filename), r, file.Size, putExtra)
 	if err != nil {
-		log.Errorf("七牛云上传失败 %s", err)
+		logger.Errorf("七牛云上传失败 %s", err)
 		return "", err
 	}
-	log.Info("上传至七牛云完毕")
+	logger.Info("上传至七牛云完毕")
 
 	src := s.OSS.Domain + ret.Key
 	// 入库
@@ -90,15 +90,15 @@ func (s *Server) UploadQiNiu(file *multipart.FileHeader, user string) (string, e
 func (s *Server) UploadLocal(file *multipart.FileHeader, user string) (string, error) {
 	// 查看目录是否存在
 	exists, err := helper.PathExists(s.PathDir)
-	log.Infof("存储路径:%s", s.PathDir)
+	logger.Infof("存储路径:%s", s.PathDir)
 	if err != nil {
-		log.Errorf("判断存储路径是否存在出错 %s:", err)
+		logger.Errorf("判断存储路径是否存在出错 %s:", err)
 		return "", err
 	}
 	if !exists {
 		err = os.MkdirAll(s.PathDir, 777)
 		if err != nil {
-			log.Errorf("创建存储路径出错 %s:", err)
+			logger.Errorf("创建存储路径出错 %s:", err)
 			return "", err
 		}
 	}

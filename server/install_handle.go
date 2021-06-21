@@ -136,6 +136,6 @@ func (h *Handler) Install(c *gin.Context) {
 }
 
 func (h *Handler) InstallView(c *gin.Context) {
-	log.Infof("用户还没安装")
+	logger.Infof("用户还没安装")
 	c.HTML(200, "install.html", nil)
 }

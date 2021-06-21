@@ -16,7 +16,7 @@ var once sync.Once
 
 var instance *Server
 
-var log = xlog.Get(true)
+var logger = xlog.Get().Debug()
 
 // Server
 type Server struct {

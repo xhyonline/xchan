@@ -16,7 +16,7 @@ func (s *Server) ConnectDB(host, user, pass, port, dbname string) error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=90s", user, pass, host, port, dbname)
 	db, err := gorm.Open("mysql", dsn)
 	if err != nil {
-		log.Errorf("链接数据库失败 %s dsn:%s", err, dsn)
+		logger.Errorf("链接数据库失败 %s dsn:%s", err, dsn)
 		return err
 	}
 	err = db.DB().Ping()
@@ -43,7 +43,7 @@ func (s *Server) CheckInstalled() error {
 				flag = true
 				break
 			}
-			log.Info("数据库链接中断正尝试链接第", i+1, "次")
+			logger.Info("数据库链接中断正尝试链接第", i+1, "次")
 		}
 		if !flag {
 			return fmt.Errorf("数据库链接中断 %s", err)
@@ -90,7 +90,7 @@ func (s *Server) reloadStoreType() error {
 			return err
 		}
 	}
-	log.Info("路径:", s.PathDir)
+	logger.Info("路径:", s.PathDir)
 	// 最后获取存储类型,并设置
 	s.StoreType, err = s.GetStoryType()
 	if err != nil {

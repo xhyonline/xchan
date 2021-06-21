@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-var log = xlog.Get(true)
+var logger = xlog.Get().Debug()
 
 func main() {
 	var port string
@@ -80,7 +80,7 @@ func main() {
 	if port == "" {
 		port = "80"
 	}
-	log.Info("项目将会启动监听在" + port + "端口")
+	logger.Info("项目将会启动监听在" + port + "端口")
 	err := g.Run("0.0.0.0:" + port)
 	if err != nil {
 		panic(err)
